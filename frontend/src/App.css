@@ -1,0 +1,96 @@
+/* Reseta estilos base e define a fonte */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px 0;
+  border-bottom: 2px solid #eaeaea;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+}
+
+.header p {
+  color: #7f8c8d;
+  margin-top: 10px;
+}
+
+/* Grid de Cards Responsivo */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Estilo do Card */
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+.source {
+  font-weight: bold;
+  color: #34495e;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.date {
+  font-size: 0.85rem;
+  color: #95a5a6;
+  margin-bottom: 20px;
+}
+
+/* Botão de Ler Mais alinhado sempre ao fundo */
+.read-more {
+  margin-top: auto;
+  display: inline-block;
+  background-color: #3498db;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.read-more:hover {
+  background-color: #2980b9;
+}
