@@ -51,7 +51,7 @@ export class AppService {
     this.pool = new Pool({
       user: 'admin',
       password: 'adminpassword',
-      host: '127.0.0.1',
+      host: process.env.DB_HOST || 'db',
       port: 5432,
       database: 'newsletter',
     });

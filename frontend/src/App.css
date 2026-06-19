@@ -1,96 +1,106 @@
-/* Reseta estilos base e define a fonte */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* frontend/src/App.css */
+:root {
+  --primary: #3498db;
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
 }
 
 body {
-  background-color: #f5f7fa;
-  color: #333;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
 }
 
+/* O segredo para centralizar tudo */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px 20px;
 }
 
 .header {
   text-align: center;
   margin-bottom: 40px;
-  padding: 20px 0;
-  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e1e8ed;
 }
 
 .header h1 {
   font-size: 2.5rem;
-  color: #2c3e50;
+  margin-bottom: 10px;
 }
 
-.header p {
-  color: #7f8c8d;
-  margin-top: 10px;
+.actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-/* Grid de Cards Responsivo */
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.filter-buttons button {
+  padding: 8px 20px;
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  color: var(--primary);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+}
+
+.filter-buttons button:hover:not(:disabled),
+.filter-buttons button:disabled {
+  background-color: var(--primary);
+  color: white;
+}
+
+.filter-buttons button:disabled {
+  cursor: default;
+  opacity: 0.9;
+}
+
+/* A grelha responsiva automática */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
 }
 
-/* Estilo do Card */
+/* Estilo moderno para os cartões */
 .card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+  border: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.08);
 }
 
 .card h2 {
   font-size: 1.2rem;
-  margin-bottom: 10px;
-  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 15px;
   line-height: 1.4;
 }
 
-.source {
-  font-weight: bold;
-  color: #34495e;
-  font-size: 0.9rem;
-  margin-bottom: 5px;
-}
-
-.date {
+.source, .date {
   font-size: 0.85rem;
-  color: #95a5a6;
-  margin-bottom: 20px;
-}
-
-/* Botão de Ler Mais alinhado sempre ao fundo */
-.read-more {
-  margin-top: auto;
-  display: inline-block;
-  background-color: #3498db;
-  color: white;
-  padding: 10px 15px;
-  text-decoration: none;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.read-more:hover {
-  background-color: #2980b9;
-}
