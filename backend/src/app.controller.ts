@@ -1,14 +1,22 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { AppService, RegisterDto, LoginDto } from './app.service';
 
-// O decorator @Controller('news') já define que a rota base aqui é /news
-@Controller('news')
+@Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  // Quando alguém acessar GET /news, esta função será chamada
-  @Get()
+  @Get('news')
   async getAllNews() {
     return await this.appService.getNews();
+  }
+
+  @Post('users')
+  async register(@Body() body: RegisterDto) {
+    return await this.appService.registerUser(body);
+  }
+
+  @Post('login')
+  async login(@Body() body: LoginDto) {
+    return await this.appService.login(body);
   }
 }

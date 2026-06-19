@@ -1,0 +1,21 @@
+# Dependências (Ignora os node_modules de todas as pastas)
+node_modules/
+
+# Variáveis de Ambiente (Ignora todos os ficheiros com senhas e chaves)
+.env
+.env.*
+*.env
+
+# Builds e Compilações (Ignora o código convertido pelo TypeScript)
+dist/
+build/
+
+# Logs de erro
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ficheiros de Sistema Operativo e Editores de Código
+.DS_Store
+.vscode/
+.idea/
