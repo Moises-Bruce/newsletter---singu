@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Auth from './Auth';
 import './App.css';
 
 interface NewsItem {
@@ -13,63 +12,43 @@ interface NewsItem {
 
 function App() {
   const [news, setNews] = useState<NewsItem[]>([]);
-  // Verifica se o utilizador já tem um token guardado no navegador
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [page, setPage] = useState(1);
+  const [period, setPeriod] = useState('all');
+  const [totalPages, setTotalPages] = useState(1);
+  const [token] = useState(localStorage.getItem('token'));
 
   useEffect(() => {
-    // Se não houver token, nem sequer tenta buscar as notícias
     if (!token) return;
-
-    // Se houver token, faz o pedido com o cabeçalho de autorização
-    axios.get('http://localhost:3000/news', {
+    const periodQuery = period !== 'all' ? `&period=${period}` : '';
+    axios.get(`http://localhost:3000/news?page=${page}&limit=10${periodQuery}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(response => setNews(response.data))
-      .catch(error => {
-        console.error('Erro ao buscar notícias:', error);
-        // Se o token estiver expirado ou inválido, limpa a sessão
-        if (error.response?.status === 401) handleLogout();
-      });
-  }, [token]);
+    .then(res => {
+      setNews(res.data.data);
+      setTotalPages(res.data.totalPages);
+    });
+  }, [page, period, token]);
 
-  const handleLoginSuccess = (newToken: string) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-  };
-
-  // Se não estiver logado, mostra o ecrã de Autenticação
-  if (!token) {
-    return <Auth onSuccess={handleLoginSuccess} />;
-  }
-
-  // Se estiver logado, mostra as notícias
   return (
     <div className="container">
-      <header className="header">
-        <h1>Newsletter Inteligente</h1>
-        <p>Curadoria automática das principais notícias de tecnologia</p>
-        <button onClick={handleLogout} style={{ marginTop: '15px', cursor: 'pointer', padding: '8px 16px' }}>
-          Terminar Sessão
-        </button>
-      </header>
-      
-      <main className="cards-grid">
-        {news.map(item => (
-          <article key={item.id} className="card">
-            <h2>{item.title}</h2>
-            <p className="source">Fonte: {item.source}</p>
-            <p className="date">Publicado em: {new Date(item.published_at).toLocaleDateString('pt-PT')}</p>
-            <a href={item.url} target="_blank" rel="noopener noreferrer" className="read-more">
-              Ler notícia completa
-            </a>
-          </article>
-        ))}
+      {/* Botões de Filtro */}
+      <div className="filters">
+        <button onClick={() => { setPeriod('day'); setPage(1); }}>Hoje</button>
+        <button onClick={() => { setPeriod('week'); setPage(1); }}>Semana</button>
+        <button onClick={() => { setPeriod('month'); setPage(1); }}>Mês</button>
+      </div>
+
+      {/* Renderização das Notícias */}
+      <main>
+        {news.map(item => <div key={item.id}>{item.title}</div>)}
       </main>
+
+      {/* Botões de Paginação */}
+      <div className="pagination">
+        <button disabled={page === 1} onClick={() => setPage(page - 1)}>Anterior</button>
+        <span>{page} de {totalPages}</span>
+        <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>Próxima</button>
+      </div>
     </div>
   );
 }

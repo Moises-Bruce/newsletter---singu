@@ -32,10 +32,14 @@ describe('AppController', () => {
 
   describe('Rotas de Notícias', () => {
     it('deve retornar uma lista de notícias (GET /news)', async () => {
-      const resultadoEsperado = [{ id: 1, title: 'Notícia de Teste' }];
+      const resultadoEsperado = {
+        data: [{ id: 1, title: 'Notícia de Teste' }],
+        total: 1,
+      };
       mockAppService.getNews.mockResolvedValue(resultadoEsperado);
 
-      expect(await appController.getAllNews()).toBe(resultadoEsperado);
+      // Alteração: passe um objeto vazio {} como argumento
+      expect(await appController.getAllNews({})).toBe(resultadoEsperado);
     });
   });
 

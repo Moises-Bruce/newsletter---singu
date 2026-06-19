@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  postgres:
+  db:
     image: postgres:15
     container_name: newsletter_db
     environment:
@@ -11,7 +9,25 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: newsletter_backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://admin:adminpassword@db:5432/newsletter
+
+  frontend:
+    build: ./frontend
+    container_name: newsletter_frontend
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend
 
 volumes:
-  pgdata:
+  postgres_data:

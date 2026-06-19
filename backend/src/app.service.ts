@@ -15,7 +15,6 @@ export interface NewsItem {
   published_at: Date;
 }
 
-// Transformado em CLASS para funcionar com o @Body() do NestJS
 export class RegisterDto {
   name?: string;
   email?: string;
@@ -39,6 +38,15 @@ export interface UserRow {
 export class AppService {
   private pool: Pool;
 
+  private readonly AVAILABLE_CATEGORIES = [
+    'Tecnologia',
+    'Inteligência Artificial',
+    'Programação',
+    'Segurança',
+    'Negócios',
+    'Inovação',
+  ];
+
   constructor(private jwtService: JwtService) {
     this.pool = new Pool({
       user: 'admin',
@@ -61,11 +69,50 @@ export class AppService {
     `);
   }
 
-  async getNews(): Promise<NewsItem[]> {
-    const result = await this.pool.query(
-      'SELECT * FROM news ORDER BY published_at DESC LIMIT 50',
-    );
-    return result.rows as NewsItem[];
+  async getNews(page: number = 1, limit: number = 10, period?: string) {
+    let dateFilter = '';
+
+    // Constrói o filtro de data com base no parâmetro
+    if (period === 'day')
+      dateFilter = "WHERE published_at >= NOW() - INTERVAL '1 day'";
+    else if (period === 'week')
+      dateFilter = "WHERE published_at >= NOW() - INTERVAL '7 days'";
+    else if (period === 'month')
+      dateFilter = "WHERE published_at >= NOW() - INTERVAL '1 month'";
+
+    // Calcula quantas notícias saltar com base na página atual
+    const offset = (page - 1) * limit;
+
+    const query = `
+      SELECT * FROM news 
+      ${dateFilter}
+      ORDER BY published_at DESC 
+      LIMIT $1 OFFSET $2
+    `;
+
+    const countQuery = `SELECT COUNT(*) FROM news ${dateFilter}`;
+
+    const [result, countResult] = await Promise.all([
+      this.pool.query(query, [limit, offset]),
+      this.pool.query(countQuery),
+    ]);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+    const rawCount = countResult.rows[0]?.count;
+    const totalCount = parseInt(String(rawCount || 0), 10);
+
+    return {
+      data: result.rows as NewsItem[],
+      total: totalCount,
+      page,
+      limit,
+      totalPages: Math.ceil(totalCount / limit),
+    };
+  }
+
+  // Adicione este bloco dentro da classe AppService
+  getAvailablePreferences(): string[] {
+    return this.AVAILABLE_CATEGORIES;
   }
 
   async registerUser(userData: RegisterDto) {
@@ -120,5 +167,30 @@ export class AppService {
       access_token: await this.jwtService.signAsync(payload),
       user: { name: user.name, email: user.email },
     };
+  }
+
+  async getUserPreferences(userId: string): Promise<string[]> {
+    const result = await this.pool.query(
+      'SELECT categories FROM user_preferences WHERE user_id = $1',
+      [userId],
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const categories = (result.rows[0]?.categories as string[]) || [];
+    return categories;
+  }
+
+  async updateUserPreferences(
+    userId: string,
+    categories: string[],
+  ): Promise<string[]> {
+    // Atualiza ou insere as preferências do usuário no banco
+    await this.pool.query(
+      `INSERT INTO user_preferences (user_id, categories) 
+       VALUES ($1, $2) 
+       ON CONFLICT (user_id) 
+       DO UPDATE SET categories = $2`,
+      [userId, categories],
+    );
+    return categories;
   }
 }
